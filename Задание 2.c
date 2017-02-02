@@ -27,8 +27,8 @@ int main()
 	int powerToThrowCube;
 	enum UsersChoose chooseByUser;
 	printf("Первый игрок, назовитесь! (Имена водятся только на английском языке)\n");
-	char firstUsersName[80];
-	gets(firstUsersName);
+	char firstUsersName[80]; //вот эта строчка задает переменную, в которую будет добавляться имя игрока. В квадратных скобках кол-во символов за один ввод.
+	gets(firstUsersName); //через gets вводится имя игрока, которое будет присвоино переменной в скобках.
 	printf("Рады вас привествовать %s. Да прибудет с вами сила.\n", firstUsersName);
 	printf("Задайте имя второму комьютеру. (Имена водятся только на английском языке)\n");
 	char secondUsersName[80];
