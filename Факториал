@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+long long factorial(int number);
+
+int main()
+{
+	
+	int number;
+	scanf("%i", &number);
+	printf("Factorial is %d\n", factorial(number));
+}
+
+long long factorial(int number)
+{
+	
+	if (number <= 1)
+	{
+		return 1;
+	}
+	return number * factorial(number - 1);
+}
