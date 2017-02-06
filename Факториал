@@ -1,21 +1,18 @@
-#include <stdio.h>
-
-long long factorial(int number);
+int number;
 
 int main()
 {
-	
-	int number;
 	scanf("%i", &number);
-	printf("Factorial is %d\n", factorial(number));
+	printf("Factorial is %d\n", factorial());
 }
 
-long long factorial(int number)
+long long factorial()
 {
-	
-	if (number <= 1)
+	long long factorialAnswer = 1;
+	int numberForFactorial = 1;
+	for (int i = 0; i < number; i++)
 	{
-		return 1;
+		factorialAnswer = factorialAnswer * numberForFactorial++;
 	}
-	return number * factorial(number - 1);
+	return factorialAnswer;
 }
