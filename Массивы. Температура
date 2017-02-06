@@ -1,0 +1,37 @@
+#include <stdio.h>
+#include <locale.h>
+
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+	printf("Температуру воздуха днем.\n");
+	float temperatyraVozdyhaVTecheniiNedeli[7];
+	for (int i = 0; i < 7; i++)
+	{
+		printf("Какая температура была в %i день?\n", i + 1);
+		scanf("%f", &temperatyraVozdyhaVTecheniiNedeli[i]);
+		printf("Сегодня была температура в %.2f градусов.\n", temperatyraVozdyhaVTecheniiNedeli[i]);
+	}
+	float srednaiaTemperatyraVozdyha = (temperatyraVozdyhaVTecheniiNedeli[0] + temperatyraVozdyhaVTecheniiNedeli[1] + temperatyraVozdyhaVTecheniiNedeli[2] + temperatyraVozdyhaVTecheniiNedeli[3] + temperatyraVozdyhaVTecheniiNedeli[4] + temperatyraVozdyhaVTecheniiNedeli[5] + temperatyraVozdyhaVTecheniiNedeli[6]) / 7;
+	printf("Средняя температура воздуха состовляет %f\n", srednaiaTemperatyraVozdyha);
+
+	float maxTemperatyra = temperatyraVozdyhaVTecheniiNedeli[0];
+	for (int i = 0; i < 7; i++)
+	{
+		if (maxTemperatyra < temperatyraVozdyhaVTecheniiNedeli[i])
+		{
+			maxTemperatyra = temperatyraVozdyhaVTecheniiNedeli[i];
+		}
+	}
+	printf("Максимальная температра в течении недели была %.2f.\n", maxTemperatyra);
+	float minTemperatyra = temperatyraVozdyhaVTecheniiNedeli[0];
+	for (int i = 0; i < 7; i++)
+	{
+		if (minTemperatyra > temperatyraVozdyhaVTecheniiNedeli[i])
+		{
+			minTemperatyra = temperatyraVozdyhaVTecheniiNedeli[i];
+		}
+	}
+	printf("Минимальная температра в течении недели была %.2f.\n", minTemperatyra);
+}
