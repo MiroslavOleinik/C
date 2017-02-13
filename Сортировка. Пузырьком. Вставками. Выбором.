@@ -1,0 +1,83 @@
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <time.h>
+#include <Windows.h>
+
+#define MASS_SIZE 10
+
+enum ViborSortirovki
+{
+	Pyzirok = 1,
+	Vstavki,
+	Vibora
+};
+
+int main()
+{
+	setlocale(LC_ALL, "rus");
+	srand(time(0));
+	printf("Здравствуйту.\n");
+	enum ViborSortirovki viborSortirovki;
+	int chisloDlaZameni;
+	int massiv[MASS_SIZE];
+	for (int i = 0; i < MASS_SIZE; i++)
+	{
+		massiv[i] = rand() % 10;
+		printf("%i ", massiv[i]);
+	}
+	printf("\nВыберите метод сортировки: ");
+	scanf("%i", &viborSortirovki);
+
+	switch (viborSortirovki)
+	{
+	case Pyzirok:
+		for (int i = 0; i < MASS_SIZE - 1; i++)
+		{
+			for (int j = 0; j < MASS_SIZE - 1 - i; j++)
+			{
+				if (massiv[j] > massiv[j + 1])
+				{
+					chisloDlaZameni = massiv[j];
+					massiv[j] = massiv[j + 1];
+					massiv[j + 1] = chisloDlaZameni;
+				}
+			}
+			
+		}
+		break;
+	case Vstavki:
+		for (int i = 0; i < MASS_SIZE - 1; i++)
+		{
+
+		}
+		break;
+	case Vibora:
+		for (int i = 0; i < MASS_SIZE - 1; i++)
+		{
+			int min = i;
+			for (int j = i + 1; j < MASS_SIZE; j++)
+			{
+				if (massiv[j] < massiv[min])
+				{
+					min = j;
+				}
+			}
+			if (min != i)
+			{
+				chisloDlaZameni = massiv[i];
+				massiv[i] = massiv[min];
+				massiv[min] = chisloDlaZameni;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
+	for (int i = 0; i < MASS_SIZE; i++)
+	{
+		printf("%i ", massiv[i]);
+	}
+}
