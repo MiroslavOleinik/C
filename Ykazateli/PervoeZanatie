@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <locale.h>
+#include <stdlib.h>
+
+void getRandom(int* userFirst, int* userSecond, int* userThierd, int* userFourth, int* userFifth);
+void printData(int* firstDayPrint, int* SecondDayPrint, int* thierdDayPrint, int* forthDayPrint, int* fifthDayPrint);
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+	int firstDay;
+	int SecondDay;
+	int thierdDay;
+	int forthDay;
+	int fifthDay;
+	getRandom(&firstDay, &SecondDay, &thierdDay, &forthDay, &fifthDay);
+	printData(&firstDay, &SecondDay, &thierdDay, &forthDay, &fifthDay);
+}
+
+void getRandom(int* userFirst, int* userSecond, int* userThierd, int* userFourth, int* userFifth)
+{
+	
+	printf("Первый день: ");
+	scanf("%i", &*userFirst);
+	if (userFirst > 32 && userFirst < 0)
+	{
+		printf("Denide.\n");
+		exit(0);
+	}
+	printf("Второй день: ");
+	scanf("%i", &*userSecond);
+	if (userSecond > 32 && userSecond < 0)
+	{
+		printf("Denide.\n");
+		exit(0);
+	}
+	printf("Третий день: ");
+	scanf("%i", &*userThierd);
+	if (userThierd > 32 && userThierd < 0)
+	{
+		printf("Denide.\n");
+		exit(0);
+	}
+	printf("Четвертый день: ");
+	scanf("%i", &*userFourth);
+	if (userFourth > 32 && userFourth < 0)
+	{
+		printf("Denide.\n");
+		exit(0);
+	}
+	printf("Пятый день: ");
+	scanf("%i", &*userFifth);
+	if (userFifth > 32 && userFifth < 0)
+	{
+		printf("Denide.\n");
+		exit(0);
+	}	
+}
+
+void printData(int* firstDayPrint, int* SecondDayPrint, int* thierdDayPrint, int* forthDayPrint, int* fifthDayPrint)
+{
+	printf("Первый день: %i\n", *firstDayPrint);
+	printf("Второй день: %i\n", *SecondDayPrint);
+	printf("Третий день: %i\n", *thierdDayPrint);
+	printf("Четвртый день: %i\n", *forthDayPrint);
+	printf("Пятый день: %i\n", *fifthDayPrint);
+}
