@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <locale.h>
+#include <stdlib.h>
+#include <string.h>
+
+union VariableType
+{
+	float floatType;
+	int intType;
+	char charType[50];
+};
+
+enum VariableTypeMenu
+{
+	FloatType = 1,
+	IntType,
+	CharType
+};
+
+struct Item
+{
+	union VariableType Data;
+	enum VariableTypeMenu chooseData;
+};
+
+int main()
+{
+
+	struct Item* array = calloc(5, 50);
+
+	for (int i = 0; i < 5; i++)
+	{
+		*array[i].Data.charType = malloc(50);
+	}
+
+	enum VariableTypeMenu variableTypeMenu;
+
+	for (int i = 0; i < 5; i++)
+	{
+		printf("\nChoose variable between: Float, Int and Char: ");
+		scanf("%i", &variableTypeMenu);
+		switch (variableTypeMenu)
+		{
+		case FloatType:
+			printf("\nEntre Float number: ");
+			scanf("%f", &array[i].Data.floatType);
+			break;
+		case IntType:
+			printf("\nEntre Int number: ");
+			scanf("%i", &array[i].Data.intType);
+			break;
+		case CharType:
+			printf("\nEntre a String: ");
+			fgets(array[i].Data.charType, 50, stdin);
+			break;
+		default:
+			break;
+		}
+		char ch;
+		do
+		{
+			ch = getchar();
+		} while (ch != '\n' && ch != EOF);
+	}
+	for (int i = 0; i < 5; i++)
+	{
+
+	}
+}
