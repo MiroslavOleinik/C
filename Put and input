@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+
+int copyFile(char* from, char* to);
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+	printf("Напишите путь к файлу из которого будем копировать: ");
+	char* from = malloc(256);
+	scanf("%s", &*from);
+	char ch;
+	do {
+		ch = getchar();
+	} while (ch != '\n' && ch != EOF);
+	printf("Напишите путь к файлу в который будем копировать: ");
+	char* to = malloc(256);
+	scanf("%s", &*to);
+	int error = copyFile(from, to);
+	if (error == 1)
+	{
+		printf("Error in file one.");
+	}
+	if (error == 2)
+	{
+		printf("Error in file two.");
+	}
+	
+	
+}
+
+int copyFile(char* from, char* to)
+{
+	FILE* file = fopen(from, "r");
+	FILE* file1 = fopen(to, "w");
+	
+	if (file == NULL)
+	{
+		return 1;
+	}
+	if (file1 == NULL)
+	{
+		return 2;
+	}
+
+	char* buff = malloc(256);
+	while (fgets(buff, 256, file))
+	{
+		fputs(buff, file1);
+		printf("%s", buff);
+	}
+
+	fclose(file);
+	fclose(file1);
+}
