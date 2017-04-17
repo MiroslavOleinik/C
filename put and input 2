@@ -1,0 +1,23 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+
+int main()
+{
+	FILE* file = fopen("D:\\Oleinik\\Новый текстовый документ.txt", "w");
+	char* buff = malloc(257);
+	for (int i = 0; i < 257; i++)
+	{
+		buff[i] = '_';
+	}
+
+	buff[256] = '\0';
+	
+	for (int i = 0; i < (1024*1024*1024)/257; i++)
+	{
+		fputs(buff, file);
+	}
+
+	fclose(file);
+	free(buff);
+}
