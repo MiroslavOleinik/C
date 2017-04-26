@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <locale.h>
+
+struct StockExchangeCourses
+{
+	float BuyDollar;
+	float SellDollar;
+	float BuyEuro;
+	float SellEuro;
+	char BankName[256];
+};
+
+void entreСurrencyRate(struct StockExchangeCourses*  stockExchangeCourses);
+void writeСurrencyRate(struct StockExchangeCourses*  stockExchangeCourses, FILE* stockExchange);
+void printInfo(FILE* stockExchange);
+void cleanInput();
+
+int main()
+{
+	struct StockExchangeCourses*  stockExchangeCourses = malloc(sizeof(struct StockExchangeCourses));
+	FILE* stockExchange = fopen("D:\\Oleinik\\Блок ввода и вывода данных\\db.bin", "rb");
+	if (stockExchange == NULL)
+	{
+		entreСurrencyRate(stockExchangeCourses);
+	}
+	else
+	{
+		printInfo(stockExchange);
+		fclose(stockExchange);
+	}
+	
+}
+
+void entreСurrencyRate(struct StockExchangeCourses* stockExchangeCourses)
+{
+	FILE* stockExchange = fopen("D:\\Oleinik\\Блок ввода и вывода данных\\db.bin", "wb");
+
+	printf("Please, entre Bank Name: ");
+	fgets(stockExchangeCourses->BankName, 255, stdin);
+	cleanInput();
+	printf("Please, entre Dollar rate (Buy): ");
+	scanf("%f", &stockExchangeCourses->BuyDollar);
+	printf("Please, entre Dollar rate (Sell): ");
+	scanf("%f", &stockExchangeCourses->SellDollar);
+	printf("Please, entre Dollar rate (Buy): ");
+	scanf("%f", &stockExchangeCourses->BuyEuro);
+	printf("Please, entre Euro rate (Sell): ");
+	scanf("%f", &stockExchangeCourses->SellEuro);
+
+	writeСurrencyRate(stockExchangeCourses, stockExchange);
+
+	free(stockExchangeCourses);
+	fclose(stockExchange);
+}
+
+void writeСurrencyRate(struct StockExchangeCourses*  stockExchangeCourses, FILE* stockExchange)
+{
+	fwrite(stockExchangeCourses, sizeof(struct StockExchangeCourses), 1, stockExchange);
+}
+
+void printInfo(FILE* stockExchange)
+{
+	struct StockExchangeCourses* buff = malloc(sizeof(struct StockExchangeCourses));
+
+	fseek(stockExchange, 0, SEEK_END);
+	int const fileSize = ftell(stockExchange);
+	fseek(stockExchange, 0, SEEK_SET);
+
+	if (sizeof(struct StockExchangeCourses) == fileSize)
+	{
+		fread(buff, sizeof(struct StockExchangeCourses), 1, stockExchange);
+		printf("Bank Name: %s", buff->BankName);
+		printf("Buy Dollar: %.2f\n", buff->BuyDollar);
+		printf("Sell Dollar: %.2f\n", buff->SellDollar);
+		printf("Buy Euro: %.2f\n", buff->BuyEuro);
+		printf("Sell Euro: %.2f\n", buff->SellEuro);
+	}
+	else
+	{
+		fread(buff, sizeof(struct StockExchangeCourses), 1, stockExchange);
+		printf("Buy Dollar: %.2f\n", buff->BuyDollar);
+		printf("Sell Dollar: %.2f\n", buff->SellDollar);
+		printf("Buy Euro: %.2f\n", buff->BuyEuro);
+		printf("Sell Euro: %.2f\n", buff->SellEuro);
+	}
+}
+
+void cleanInput()
+{
+	char ch;
+	do
+	{
+		ch = getchar();
+	} while (ch != '\n' && ch != EOF);
+}
