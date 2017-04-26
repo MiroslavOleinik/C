@@ -25,7 +25,7 @@ struct InfoAboutCar
 	char* color;
 	char* fuelType;
 	int year;
-	
+
 };
 
 void cleanInput();
@@ -64,21 +64,24 @@ int main()
 		cleanInput();
 	}
 
-	callMenu(&infoAboutCar, &carQuantity);
+	callMenu(infoAboutCar, &carQuantity);
 
 	for (int i = 0; i < carQuantity; i++)
 	{
 		free(infoAboutCar[i].Name);
+		free(infoAboutCar[i].Model);
+		free(infoAboutCar[i].color);
+		free(infoAboutCar[i].fuelType);
+		free(infoAboutCar[i].year);
 	}
 	free(infoAboutCar);
-	
+
 
 }
 
 void callMenu(struct InfoAboutCar* infoAboutCar, int carQuantity)
 {
 	printf("Выберите:\n1. Вывести информацию о машинах на экран.\n2. Отсортировать и вывести на экран информацию о машинах.\n");
-	int yearForSort;
 	enum Menu menu;
 	scanf("%i", &menu);
 	switch (menu)
@@ -86,36 +89,38 @@ void callMenu(struct InfoAboutCar* infoAboutCar, int carQuantity)
 	case PrintStruct:
 		for (int i = 0; i < carQuantity; i++)
 		{
-			printCar(&infoAboutCar, &i);
+			printCar(&infoAboutCar[i]);
 		}
 		break;
 	case SortByYearAndPrint:
-		printf("Введите год для фильтровки: ");
-		scanf("%i", &yearForSort);
-		for (int i = 0; i < carQuantity; i++)
-		{
-			if (infoAboutCar[i].year > yearForSort)
-			{
-				printf("Название:%s", infoAboutCar[i].Name);
-				printf("Модель:%s", infoAboutCar[i].Model);
-				printf("Цвет:%s", infoAboutCar[i].fuelType);
-				printf("Тип топлива:%s", infoAboutCar[i].color);
-				printf("Год:%i\n", infoAboutCar[i].year);
-			}
-		}
+		sortByYear(infoAboutCar, &carQuantity);
 		break;
 	default:
 		break;
 	}
 }
 
-void printCar(struct InfoAboutCar* infoAboutCar, int i)
+void sortByYear(struct InfoAboutCar* infoAboutCar, int carQuantity)
 {
-	printf("Brand: %s", infoAboutCar[i].Name);
-	printf("Model: %s", infoAboutCar[i].Model);
-	printf("FuelType: %s", infoAboutCar[i].fuelType);
-	printf("Color: %s", infoAboutCar[i].color);
-	printf("Year: %i\n", infoAboutCar[i].year);
+	int yearForSort;
+	printf("Введите год для фильтровки: ");
+	scanf("%i", &yearForSort);
+	for (int i = 0; i < carQuantity; i++)
+	{
+		if (infoAboutCar[i].year > yearForSort)
+		{
+			printCar(&infoAboutCar[i]);
+		}
+	}
+}
+
+void printCar(struct InfoAboutCar* infoAboutCar)
+{
+	printf("Brand: %s", infoAboutCar->Name);
+	printf("Model: %s", infoAboutCar->Model);
+	printf("FuelType: %s", infoAboutCar->fuelType);
+	printf("Color: %s", infoAboutCar->color);
+	printf("Year: %i\n", infoAboutCar->year);
 }
 
 void cleanInput()
@@ -126,3 +131,5 @@ void cleanInput()
 		ch = getchar();
 	} while (ch != '\n' && ch != EOF);
 }
+
+
