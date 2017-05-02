@@ -1,0 +1,168 @@
+//Разработать программу хранения рецептов.
+//При запуске программа показывает меню.
+//Меню:
+//1. Добавление рецепта
+//2. Просмотр рецепта
+//3. Редактирование рецепта
+//4. Удаление рецепта
+//5. Выход
+//Каждый рецепт должен содержать следующую информацию :
+//1. Дату создания рецепта
+//2. Имя рецепта
+//3. Текст рецепта
+//4. Рейтинг(от 1 до 10)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <locale.h>
+#include <direct.h>
+#include <Windows.h>
+
+#define RECIPE_NAME_SIZE 100
+#define RECIPE_PASS_SIZE 117
+
+struct InfoAboutRecipe
+{
+	char DateOfCreation[15];
+	char RecipeName[RECIPE_NAME_SIZE];
+	char Recipe[1024];
+	int Rate;
+};
+
+enum Menu
+{
+	OpenRecipesList = 1,
+	AddRecipe,
+	OpenRecipe,
+	CorrectingRecipe,
+	DeletingRecipe,
+	Exit
+};
+
+void openMenu();
+void addNewRecipe();
+void openRecipe();
+void deleteRecipe();
+void cleanInput();
+
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+	printf("Добро пожаловать в электронную книгу рецептов.\n");
+	openMenu();
+	return 0;
+}
+
+void openMenu()
+{
+	enum Menu menu;
+	printf("\t\tМеню:\n1. Открыть список рецептов\n2. Добавить рецепт.\n3. Посмотреть рецепт.\n"
+		"4. Редактирование рецепта.\n5. Удаление рецепта.\n6. Выход.\nВыберите один из пунктов для продолжения: ");
+	scanf("%i", &menu);
+	switch (menu)
+	{
+	case OpenRecipesList:
+
+		break;
+	case AddRecipe:
+		addNewRecipe();
+		break;
+	case OpenRecipe:
+		openRecipe();
+		break;
+	case CorrectingRecipe:
+		break;
+	case DeletingRecipe:
+		deleteRecipe();
+		break;
+	case Exit:
+		return;
+		break;
+	default:
+		break;
+	}
+}
+
+void addNewRecipe()
+{
+	struct InfoAboutRecipe* infoAboutRecipe = malloc(sizeof(struct InfoAboutRecipe));
+
+	char pass[RECIPE_PASS_SIZE] = "E:\\Recipe Book\\";
+	mkdir(pass);
+	
+	printf("Введите название рецепта на английском языке: ");
+	cleanInput();
+	scanf("%s", &infoAboutRecipe->RecipeName);
+	strcat(pass, infoAboutRecipe->RecipeName, RECIPE_NAME_SIZE);
+	strcat(pass, ".recipe", 8);
+
+	FILE* newRecipe = fopen(pass, "wb");
+	printf("Выполняю... ");
+	Sleep(600);
+	printf("Рецепт с название %s создан.\nЗаполните информацию о рецепте.\n", infoAboutRecipe->RecipeName);
+
+	
+	printf("Введите дату создания в формате ДД.ММ.ГГГГ: ");
+	cleanInput();
+
+	fgets(infoAboutRecipe->DateOfCreation, 15, stdin);
+	printf("Введите содержание рецепта:\n");
+	fgets(infoAboutRecipe->Recipe, 1024, stdin);
+	printf("Введите рейтинг рецепта по 10-тибальной системе (1 - 10): ");
+	scanf("%i", &infoAboutRecipe->Rate);
+
+	fwrite(infoAboutRecipe, sizeof(struct InfoAboutRecipe), 1, newRecipe);
+	
+	printf("Выполняю...\n");
+	Sleep(300);
+	openMenu();
+}
+
+void openRecipe()
+{
+	struct InfoAboutRecipe* buff = malloc(sizeof(struct InfoAboutRecipe));
+
+	char pass[RECIPE_PASS_SIZE] = "E:\\Recipe Book\\";
+	printf("Введите название рецепта, который вы хотите открыть: ");
+	scanf("%s", &buff->RecipeName);
+	strcat(pass, buff->RecipeName, RECIPE_NAME_SIZE);
+	strcat(pass, ".recipe", 8);
+	FILE* openRecipe = fopen(pass, "r+b");
+	if (openRecipe == NULL)
+	{
+		printf("Ошибка.\n");
+		return;
+	}
+	else
+	{
+		fread(buff, sizeof(struct InfoAboutRecipe), 1, openRecipe);
+		printf("Дата создания: %s", buff->DateOfCreation);
+		printf("Название рецепта: %s\n", buff->RecipeName);
+		printf("Содержание рецепта: %s", buff->Recipe);
+		printf("Оценка: %i\n", buff->Rate);
+		openMenu();
+	}
+}
+
+void deleteRecipe()
+{
+	char pass[RECIPE_PASS_SIZE] = "E:\\Recipe Book\\";
+	printf("Введите название рецепта, который вы хотите открыть: ");
+	char recipeName[RECIPE_NAME_SIZE];
+	scanf("%s", &recipeName);
+	strcat(pass, recipeName, RECIPE_NAME_SIZE);
+	strcat(pass, ".recipe", 8);
+	remove(pass);
+	openMenu();
+}
+
+void cleanInput()
+{
+	char ch;
+	do
+	{
+		ch = getchar();
+	} while (ch != '\n' && ch != EOF);
+}
