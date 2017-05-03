@@ -21,12 +21,14 @@
 
 #define RECIPE_NAME_SIZE 100
 #define RECIPE_PASS_SIZE 117
+#define RECIPE_SIZE 5000
+#define DATE_OF_CREATION_SIZE 15
 
 struct InfoAboutRecipe
 {
-	char DateOfCreation[15];
+	char DateOfCreation[DATE_OF_CREATION_SIZE];
 	char RecipeName[RECIPE_NAME_SIZE];
-	char Recipe[1024];
+	char Recipe[RECIPE_SIZE];
 	int Rate;
 };
 
@@ -37,13 +39,15 @@ enum Menu
 	OpenRecipe,
 	CorrectingRecipe,
 	DeletingRecipe,
-	Exit
+	Exit,
+	Continue = 1
 };
 
 void openMenu();
 void addNewRecipe();
 void openRecipe();
 void deleteRecipe();
+void continueOrNot();
 void cleanInput();
 
 
@@ -61,6 +65,7 @@ void openMenu()
 	printf("\t\tМеню:\n1. Открыть список рецептов\n2. Добавить рецепт.\n3. Посмотреть рецепт.\n"
 		"4. Редактирование рецепта.\n5. Удаление рецепта.\n6. Выход.\nВыберите один из пунктов для продолжения: ");
 	scanf("%i", &menu);
+
 	switch (menu)
 	{
 	case OpenRecipesList:
@@ -107,17 +112,20 @@ void addNewRecipe()
 	printf("Введите дату создания в формате ДД.ММ.ГГГГ: ");
 	cleanInput();
 
-	fgets(infoAboutRecipe->DateOfCreation, 15, stdin);
+	fgets(infoAboutRecipe->DateOfCreation, DATE_OF_CREATION_SIZE, stdin);
 	printf("Введите содержание рецепта:\n");
-	fgets(infoAboutRecipe->Recipe, 1024, stdin);
+	fgets(infoAboutRecipe->Recipe, RECIPE_SIZE, stdin);
 	printf("Введите рейтинг рецепта по 10-тибальной системе (1 - 10): ");
 	scanf("%i", &infoAboutRecipe->Rate);
 
 	fwrite(infoAboutRecipe, sizeof(struct InfoAboutRecipe), 1, newRecipe);
 	
+	free(infoAboutRecipe);
+	fclose(newRecipe);
+
 	printf("Выполняю...\n");
 	Sleep(300);
-	openMenu();
+	continueOrNot();
 }
 
 void openRecipe()
@@ -132,17 +140,22 @@ void openRecipe()
 	FILE* openRecipe = fopen(pass, "r+b");
 	if (openRecipe == NULL)
 	{
-		printf("Ошибка.\n");
-		return;
+		printf("Ошибка. Рецпт не найден.\n");
+		continueOrNot();
 	}
 	else
 	{
+		system("cls");
+
 		fread(buff, sizeof(struct InfoAboutRecipe), 1, openRecipe);
+		printf("\t\t%s\n", buff->RecipeName);
 		printf("Дата создания: %s", buff->DateOfCreation);
-		printf("Название рецепта: %s\n", buff->RecipeName);
 		printf("Содержание рецепта: %s", buff->Recipe);
 		printf("Оценка: %i\n", buff->Rate);
-		openMenu();
+		fclose(openRecipe);
+		free(buff);
+		continueOrNot();
+		
 	}
 }
 
@@ -154,8 +167,34 @@ void deleteRecipe()
 	scanf("%s", &recipeName);
 	strcat(pass, recipeName, RECIPE_NAME_SIZE);
 	strcat(pass, ".recipe", 8);
-	remove(pass);
-	openMenu();
+	if (remove(pass) == -1)
+	{
+		printf("Ошибка! Такого рецепта не существует.\n");
+		continueOrNot();
+	}
+	else
+	{
+		printf("Рецепт успешно удалён.\n");
+	}
+		
+
+	continueOrNot();
+}
+
+void continueOrNot()
+{
+	enum Menu continueOrNot;
+	printf("Для продолжения введите 1, если хотите звершить работу с программой, введите любую цифру: ");
+	scanf("%i", &continueOrNot);
+	switch (continueOrNot)
+	{
+	case Continue:
+		openMenu();
+		break;
+	default:
+		return;
+		break;
+	}
 }
 
 void cleanInput()
