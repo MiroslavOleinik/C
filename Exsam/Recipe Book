@@ -44,7 +44,7 @@ enum Menu
 };
 
 void openMenu(char* pass); //функция для открытия меню, в котором вызываеются отдельный функционал программы
-void showAllRecipes(char* pass);
+void showAllRecipes(char* pass); //показывает все файлы в папке
 void entereNameInPassToRecipe(char* pass, struct InfoAboutRecipe* infoAboutRecipe); //в ней создается путь сохранения рецепта. А имеено, вводится основа пути, к которое добавляется название рецпта (файла)
 void addNewRecipe(char* pass); //функция создания нового рецепта
 void openRecipe(char* pass); //функция просмотра рецепт
@@ -56,13 +56,13 @@ void cleanInput();
 int main()
 {
 	setlocale(LC_ALL, "Rus");
-	
+
 	char* pass = malloc(RECIPE_PASS_SIZE);
 	strcpy(pass, "E:\\Recipe Book\\");
-	
+
 	printf("Добро пожаловать в электронную книгу рецептов.\n");
 	openMenu(pass);
-	
+
 	return 0;
 }
 
@@ -175,7 +175,7 @@ void openRecipe(char* pass)
 		fclose(openRecipe);
 		free(buff);
 		openMenu(pass);
-		
+
 	}
 }
 
