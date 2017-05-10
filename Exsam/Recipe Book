@@ -58,8 +58,8 @@ int main()
 	setlocale(LC_ALL, "Rus");
 
 	char* pass = malloc(RECIPE_PASS_SIZE);
-	strcpy(pass, "E:\\Recipe Book\\");
-
+	strcpy(pass, "D:\\Recipe Book\\");
+	mkdir(pass);
 	printf("Добро пожаловать в электронную книгу рецептов.\n");
 	openMenu(pass);
 
@@ -77,18 +77,23 @@ void openMenu(char* pass)
 	switch (menu)
 	{
 	case ShowAllRecipes:
+		system("cls");
 		showAllRecipes(pass);
 		break;
 	case AddRecipe:
+		system("cls");
 		addNewRecipe(pass);
 		break;
 	case OpenRecipe:
+		system("cls");
 		openRecipe(pass);
 		break;
 	case CorrectingRecipe:
+		system("cls");
 		reductRecipe(pass);
 		break;
 	case DeletingRecipe:
+		system("cls");
 		deleteRecipe(pass);
 		break;
 	case Exit:
@@ -101,7 +106,7 @@ void openMenu(char* pass)
 
 void entereNameInPassToRecipe(char* pass, struct InfoAboutRecipe* infoAboutRecipe)
 {
-	strcpy(pass, "E:\\Recipe Book\\");
+	strcpy(pass, "D:\\Recipe Book\\");
 	printf("Введите название рецепта на английском языке: ");
 	cleanInput();
 	scanf("%s", &infoAboutRecipe->RecipeName);
@@ -111,26 +116,28 @@ void entereNameInPassToRecipe(char* pass, struct InfoAboutRecipe* infoAboutRecip
 
 void showAllRecipes(char* pass)
 {
+	WIN32_FIND_DATAA found;
 	struct InfoAboutRecipe* buff = malloc(sizeof(struct InfoAboutRecipe));
-	FILE* fileForRecipeNames = fopen("E:\\Recipe Book\\File for svaing recipe names(DO NOT TOUCH!!!).recipe", "r+b");
-	if (fileForRecipeNames == NULL)
+	HANDLE findResult = FindFirstFileA("D:\\Recipe Book\\*.recipe", &found);
+	if (FindFirstFileA == INVALID_HANDLE_VALUE)
 	{
 		printf("Ошибка!");
 		return;
 	}
-	fread(buff->RecipeName, sizeof(struct InfoAboutRecipe), 1, fileForRecipeNames);
-	printf("Название рецептов %s", buff->RecipeName);
-	fclose(fileForRecipeNames);
+	printf("Имеются следующие рецепты.\n");
+	do 
+	{
+		printf("%s\n", found.cFileName);
+	} while (FindNextFileA(findResult, &found));
+	openMenu(pass);
 }
 
 void addNewRecipe(char* pass)
 {
-	FILE* fileForRecipeNames = fopen("E:\\Recipe Book\\File for svaing recipe names(DO NOT TOUCH!!!).recipe", "ab");
-	mkdir(pass);
 	struct InfoAboutRecipe* infoAboutRecipe = malloc(sizeof(struct InfoAboutRecipe));
 
 	entereNameInPassToRecipe(pass, infoAboutRecipe);
-
+	
 	FILE* newRecipe = fopen(pass, "wb");
 	printf("Рецепт с название %s создан.\nЗаполните информацию о рецепте.\n", infoAboutRecipe->RecipeName);
 
@@ -143,10 +150,9 @@ void addNewRecipe(char* pass)
 	scanf("%i", &infoAboutRecipe->Rate);
 
 	fwrite(infoAboutRecipe, sizeof(struct InfoAboutRecipe), 1, newRecipe);
-	fwrite(infoAboutRecipe->Recipe, sizeof(struct InfoAboutRecipe), 1, fileForRecipeNames);
 
 	free(infoAboutRecipe);
-	fclose(newRecipe, fileForRecipeNames);
+	fclose(newRecipe);
 
 	printf("Запись рецепта завершена.\n");
 	openMenu(pass);
