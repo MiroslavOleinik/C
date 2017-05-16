@@ -1,0 +1,297 @@
+//Разработать программу хранения рецептов.
+//При запуске программа показывает меню.
+//Меню:
+//1. Добавление рецепта
+//2. Просмотр рецепта
+//3. Редактирование рецепта
+//4. Удаление рецепта
+//5. Выход
+//Каждый рецепт должен содержать следующую информацию :
+//1. Дату создания рецепта
+//2. Имя рецепта
+//3. Текст рецепта
+//4. Рейтинг(от 1 до 10)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <locale.h>
+#include <direct.h>
+#include <Windows.h>
+
+#define RECIPE_NAME_SIZE 100
+#define RECIPE_PASS_SIZE 117
+#define RECIPE_SIZE 5000
+#define DATE_OF_CREATION_SIZE 15
+
+struct RecipeNames
+{
+	char* RecipeName;
+};
+
+struct InfoAboutRecipe
+{
+	char DateOfCreation[DATE_OF_CREATION_SIZE];
+	char RecipeName[RECIPE_NAME_SIZE];
+	char Recipe[RECIPE_SIZE];
+	int Rate;
+};
+
+enum Menu
+{
+	ShowAllRecipes = 1,
+	AddRecipe,
+	OpenRecipe,
+	CorrectingRecipe,
+	DeletingRecipe,
+	Exit,
+	Continue = 1
+};
+
+int countForStrcut = 0;
+
+void openMenu(char* path); //функция для открытия меню, в котором вызываеются отдельный функционал программы
+void showAllRecipes(char* path); //показывает все файлы в папке
+void entereNameInPassToRecipe(char* path, struct RecipeNames recipeNames); //в ней создается путь сохранения рецепта. А имеено, вводится основа пути, к которое добавляется название рецпта (файла)
+void addNewRecipe(char* path); //функция создания нового рецепта
+void openRecipe(char* path); //функция просмотра рецепт
+void reductRecipe(char* path); //функция редактирования рецепта
+void deleteRecipe(char* path); //функция удаления рецепта
+void cleanInput();
+
+
+int main()
+{
+	setlocale(LC_ALL, "Rus");
+
+	char* path = malloc(RECIPE_PASS_SIZE);
+	strcpy(path, "E:\\Recipe Book\\");
+	mkdir(path);
+	printf("Добро пожаловать в электронную книгу рецептов.\n");
+	openMenu(path);
+
+	return 0;
+}
+
+void openMenu(char* path)
+{
+	enum Menu menu;
+
+	printf("\t\tМеню:\n1. Показать все рецепты.\n2. Добавить рецепт.\n3. Посмотреть рецепт.\n"
+		"4. Редактирование рецепта.\n5. Удаление рецепта.\n6. Выход.\nВыберите один из пунктов для продолжения: ");
+	scanf("%i", &menu);
+
+	switch (menu)
+	{
+	case ShowAllRecipes:
+		system("cls");
+		showAllRecipes(path);
+		break;
+	case AddRecipe:
+		system("cls");
+		addNewRecipe(path);
+		break;
+	case OpenRecipe:
+		system("cls");
+		openRecipe(path);
+		break;
+	case CorrectingRecipe:
+		system("cls");
+		reductRecipe(path);
+		break;
+	case DeletingRecipe:
+		system("cls");
+		deleteRecipe(path);
+		break;
+	case Exit:
+		printf("Спасибо, что выбрали нас. Да прибудет с вами кухня!");
+		return;
+		break;
+	default:
+		system("cls");
+		printf("Данная переменная не распознана, повторите операцию.\n");
+		openMenu(path);
+		break;
+	}
+}
+
+void entereNameInPassToRecipe(char* path, struct RecipeNames* recipeNames)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		recipeNames[i].RecipeName = malloc(RECIPE_NAME_SIZE);
+	}
+	int usersChooseRecipe;
+	strcpy(path, "E:\\Recipe Book\\");
+	showAllRecipes(path);
+	printf("Введите номер рецепта: ");
+	cleanInput();
+	scanf("%s", &usersChooseRecipe);
+	printf("%s", recipeNames[usersChooseRecipe - 1].RecipeName);
+	//strcat(path, recipeNames[usersChooseRecipe - 1].RecipeName, RECIPE_NAME_SIZE);
+}
+
+void showAllRecipes(char* path)
+{
+	WIN32_FIND_DATAA found;
+	
+	HANDLE findResult = FindFirstFileA("E:\\Recipe Book\\*.recipe", &found);
+	if (FindFirstFileA == INVALID_HANDLE_VALUE)
+	{
+		printf("Ошибка!");
+		return;
+	}
+
+	countForStrcut = 0;
+	int poradkovijNumber = 1;
+	do
+	{
+		countForStrcut++;
+	} while (FindNextFileA(findResult, &found));
+
+	struct RecipeNames* recipeNames = malloc(countForStrcut * sizeof(struct InfoAboutRecipe));
+	findResult = FindFirstFileA("E:\\Recipe Book\\*.recipe", &found);
+	printf("Имеются следующие рецепты.\n");
+	countForStrcut = 0;
+	poradkovijNumber = 1;
+	do
+	{
+		recipeNames[countForStrcut].RecipeName = malloc(RECIPE_NAME_SIZE);
+		strcpy(recipeNames[countForStrcut].RecipeName, found.cFileName);
+		printf("#%i: %s\n", poradkovijNumber, recipeNames[countForStrcut].RecipeName);
+		poradkovijNumber++;
+		countForStrcut++;
+	} while (FindNextFileA(findResult, &found));
+
+	for (int i = 0; i < countForStrcut; i++)
+	{
+		free(recipeNames[i].RecipeName);
+	}
+	free(recipeNames);
+
+	return;
+	openMenu(path);
+}
+
+void addNewRecipe(char* path)
+{
+	struct InfoAboutRecipe* infoAboutRecipe = malloc(sizeof(struct InfoAboutRecipe));
+
+	strcpy(path, "E:\\Recipe Book\\");
+	printf("Введите название рецепта на английском языке: ");
+	cleanInput();
+	scanf("%s", &infoAboutRecipe->RecipeName);
+	strcat(path, infoAboutRecipe->RecipeName, RECIPE_NAME_SIZE);
+	strcat(path, ".recipe", 8);
+
+	FILE* newRecipe = fopen(path, "wb");
+	printf("Рецепт с название %s создан.\nЗаполните информацию о рецепте.\n", infoAboutRecipe->RecipeName);
+
+	printf("Введите дату создания в формате ДД.ММ.ГГГГ: ");
+	cleanInput();
+	fgets(infoAboutRecipe->DateOfCreation, DATE_OF_CREATION_SIZE, stdin);
+	int dateLength = strlen(infoAboutRecipe->DateOfCreation);
+	while (dateLength > 11 || dateLength < 10)
+	{
+		printf("Дата введёна неверно.\nПовторите запись: ");
+		fgets(infoAboutRecipe->DateOfCreation, DATE_OF_CREATION_SIZE, stdin);
+		dateLength = strlen(infoAboutRecipe->DateOfCreation);
+	}
+
+	printf("Введите содержание рецепта (максимальное кол-во: 5000 знаков):\n");
+	fgets(infoAboutRecipe->Recipe, RECIPE_SIZE, stdin);
+	printf("Введите рейтинг рецепта по 10-тибальной системе (1 - 10): ");
+	scanf("%i", &infoAboutRecipe->Rate);
+	while (infoAboutRecipe->Rate > 10 || infoAboutRecipe->Rate < 1)
+	{
+		printf("Рейтинг введён неверно.\nПовторите запись: ");
+		scanf("%i", &infoAboutRecipe->Rate);
+	}
+
+	fwrite(infoAboutRecipe, sizeof(struct InfoAboutRecipe), 1, newRecipe);
+
+	free(infoAboutRecipe);
+	fclose(newRecipe);
+
+	printf("Запись рецепта завершена.\n");
+	openMenu(path);
+}
+
+void openRecipe(char* path)
+{
+	struct InfoAboutRecipe* buff = malloc(sizeof(struct InfoAboutRecipe));
+	struct InfoAboutRecipe* recipeName = malloc(sizeof(struct InfoAboutRecipe));
+	entereNameInPassToRecipe(path, recipeName);
+	FILE* openRecipe = fopen(path, "r+b");
+
+	if (openRecipe == NULL)
+	{
+		printf("Ошибка. Рецепт не найден.\n");
+		free(buff);
+		openMenu(path);
+	}
+	else
+	{
+		system("cls");
+		fread(buff, sizeof(struct InfoAboutRecipe), 1, openRecipe);
+		printf("Название рецепта: %s\n", buff->RecipeName);
+		printf("Дата создания: %s", buff->DateOfCreation);
+		printf("Содержание рецепта: %s", buff->Recipe);
+		printf("Оценка: %i\n", buff->Rate);
+		fclose(openRecipe);
+		free(buff);
+		openMenu(path);
+
+	}
+}
+
+void reductRecipe(char* path)
+{
+	struct InfoAboutRecipe* buff = malloc(sizeof(struct InfoAboutRecipe));
+	entereNameInPassToRecipe(path, buff);
+
+	FILE* openForReductRecipe = fopen(path, "r+b");
+	fread(buff, sizeof(struct InfoAboutRecipe), 1, openForReductRecipe);
+	fclose(openForReductRecipe);
+
+	printf("Название рецепта: %s\n", buff->RecipeName);
+	printf("Дата создания: %s", buff->DateOfCreation);
+	printf("Оценка: %i\n", buff->Rate);
+	printf("Содержание рецепта: ");
+	cleanInput();
+	fgets(buff->Recipe, RECIPE_SIZE, stdin);
+
+	FILE* reductRecipe = fopen(path, "w+b");
+	fwrite(buff, sizeof(struct InfoAboutRecipe), 1, reductRecipe);
+	fclose(reductRecipe);
+	free(buff);
+
+	openMenu(path);
+}
+
+void deleteRecipe(char* path)
+{
+	struct InfoAboutRecipe* buff = malloc(sizeof(struct InfoAboutRecipe));
+
+	entereNameInPassToRecipe(path, buff);
+
+	if (remove(path) == -1)
+	{
+		printf("Ошибка! Такого рецепта не существует.\n");
+		openMenu(path);
+	}
+	else
+	{
+		printf("Рецепт успешно удалён.\n");
+		openMenu(path);
+	}
+}
+
+void cleanInput()
+{
+	char ch;
+	do
+	{
+		ch = getchar();
+	} while (ch != '\n' && ch != EOF);
+}
